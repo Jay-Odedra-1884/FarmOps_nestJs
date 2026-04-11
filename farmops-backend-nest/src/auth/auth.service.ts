@@ -1,35 +1,46 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtservice: JwtService
+  ) {}
 
-  async create(createAuthDto: CreateAuthDto) {
-    // Logic to create a user using this.prisma.user.create(...)
-    return this.prisma.user.create({ data: {
-       name: createAuthDto.name,
-      email: createAuthDto.email,
-      password: createAuthDto.password, // Remember to hash this!
-      role: 'USER'
-    } });
+  //service to create a new user
+  async register(createAuthDto: CreateAuthDto){
+
+    const hashedPassword = await bcrypt.hash(createAuthDto.password, 10);
+
+    return this.prisma.user.create({
+      data: {
+        email: createAuthDto.email,
+        password: hashedPassword,
+        name: createAuthDto.name,
+        role: createAuthDto.role,
+        mobile: createAuthDto.mobile || "",
+      }
+    });
   }
 
-  findAll() {
-    return this.prisma.user.findMany();
+  //services to login user
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+    if (user && await bcrypt.compare(pass, user.password)) {
+      const { password, ...result } = user;
+      return result;
+    }
+    return null;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
-
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async login(user: any) {
+    const payload = { email: user.email, sub: user.id, role: user.role };
+    return {
+      access_token: this.jwtservice.sign(payload),
+    };
   }
 }
