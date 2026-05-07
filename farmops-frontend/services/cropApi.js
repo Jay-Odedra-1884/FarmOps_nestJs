@@ -40,7 +40,7 @@ export const addCrop = async (authToken, cropData) => {
 export const updateCrop = async (authToken, cropData, cropId) => {
     try {
         const res = await fetch(process.env.NEXT_PUBLIC_API_URL + `/crops/${cropId}`, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authToken}`

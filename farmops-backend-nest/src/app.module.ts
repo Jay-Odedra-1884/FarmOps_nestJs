@@ -6,9 +6,10 @@ import { AuthModule } from './auth/auth.module';
 import { CategoryModule } from './category/category.module';
 import { ListingsModule } from './listings/listings.module';
 import { FarmsModule } from './farms/farms.module';
+import { CropsModule } from './crops/crops.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, CategoryModule, ListingsModule, FarmsModule],
+  imports: [PrismaModule, AuthModule, CategoryModule, ListingsModule, FarmsModule, CropsModule],
   controllers: [AppController],
   providers: [AppService],
 })
