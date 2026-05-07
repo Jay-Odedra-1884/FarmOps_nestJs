@@ -2,8 +2,9 @@
 
 import RichTextEditor from '@/components/RichTextEditor'
 import { MyHook } from '@/context/AppProvider';
-import { getCategory } from '@/services/categoryApi';
+import { addCategory, getCategory } from '@/services/categoryApi';
 import { addListing } from '@/services/listingApi';
+import { X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react'
 
@@ -14,6 +15,7 @@ function page() {
   const [imageFile, setImageFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [error, setError] = useState({});
+  const [isCategoryPopupOpen, setIsCategoryPopupOpen] = useState(false);
 
   const router = useRouter();
 
@@ -43,14 +45,14 @@ function page() {
 
   const validateForm = (data) => {
     let newErrors = {};
-    
+
     if (!data.get('title')) {
       newErrors.title = 'Title is required';
     }
-    if(data.get('title') && data.get('title')?.length < 3 || data.get('title')?.length > 100){
+    if (data.get('title') && data.get('title')?.length < 3 || data.get('title')?.length > 100) {
       newErrors.title = 'Title must be at least 3 to 100 characters long';
     }
-    if(data.get('title') && /^[0-9]+$/.test(data.get('title'))) {
+    if (data.get('title') && /^[0-9]+$/.test(data.get('title'))) {
       newErrors.title = 'Title must not be a number';
     }
     if (!data.get('description')) {
@@ -59,10 +61,10 @@ function page() {
     if (!data.get('category_id')) {
       newErrors.category_id = 'Category is required';
     }
-    if(data.get('image') && !(["image/jpeg", "image/png", "image/webp"].includes(data.get('image')?.type))) {
+    if (data.get('image') && !(["image/jpeg", "image/png", "image/webp"].includes(data.get('image')?.type))) {
       newErrors.image = 'Image must be a valid image file';
     }
-    
+
     setError(newErrors);
     return Object.keys(newErrors).length === 0;
   }
@@ -77,13 +79,27 @@ function page() {
 
       // Log form data for debugging
       const formData = new FormData(e.target);
-      if(!validateForm(formData)) return;
+      if (!validateForm(formData)) return;
 
       const result = await addListing(authToken, formData);
       if (result) {
         e.target.reset();
         router.push('/listings');
       }
+    }
+  }
+
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const result = await addCategory(authToken, formData);
+    if (result) {
+      e.target.reset();
+      setIsCategoryPopupOpen(false);
+    }
+
+    if(result.success){
+      getCategories();
     }
   }
 
@@ -118,6 +134,10 @@ function page() {
             {error.description && <p className="text-red-500 text-sm mt-2">{error.description}</p>}
           </div>
 
+          {/* Add Category */}
+          <div className='float-right bg-white px-2 py-1 rounded-sm shadow' onClick={() => setIsCategoryPopupOpen(!isCategoryPopupOpen)}>
+            <p className='text-black cursor-pointer'>+ Add Category</p>
+          </div>
 
           {/* category */}
           <div>
@@ -166,6 +186,25 @@ function page() {
           </div>
         </form>
       </div>
+
+
+      {/* Add Category Popup */}
+      {isCategoryPopupOpen && (
+        <div className='fixed top-0 left-0 w-full h-screen bg-black/50 flex items-center justify-center'>
+          <div className='bg-white p-4 rounded-md w-1/4'>
+            <div className='flex items-center justify-between'>
+              <p className='text-black font-semibold'>Add Category</p>
+              <button onClick={() => setIsCategoryPopupOpen(false)}>
+                <X className='text-black cursor-pointer' />
+              </button>
+            </div>
+            <form onSubmit={handleAddCategory} className='flex items-center gap-2 mt-4'>
+              <input type="text" name="name" placeholder='Category Name' className='w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all' />
+              <button className='bg-black text-white px-2 py-1 rounded-md cursor-pointer'>Add</button>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

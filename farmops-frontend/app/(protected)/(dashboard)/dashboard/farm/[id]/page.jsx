@@ -290,25 +290,25 @@ function FarmDetailPage() {
             {statsLoading ? (
               <Spinner className="size-8" />
             ) : (
-              "₹" + stats.expenses
+              "₹" + stats?.expenses
             )}
           </p>
         </div>
         <div className="w-full h-24 text-black bg-white shadow rounded-2xl flex flex-col justify-center items-center">
           <p className="text-sm font-medium text-gray-500">Income</p>
           <p className="text-green-500 text-2xl font-bold mt-1">
-            {statsLoading ? <Spinner className="size-8" /> : "₹" + stats.income}
+            {statsLoading ? <Spinner className="size-8" /> : "₹" + stats?.income}
           </p>
         </div>
         <div className="w-full h-24 text-black bg-white shadow rounded-2xl flex flex-col justify-center items-center">
           <p className="text-sm font-medium text-gray-500">Profit</p>
           <p
-            className={`text-2xl font-bold mt-1 ${stats.profit < 0 ? "text-red-500" : "text-green-500"}`}
+            className={`text-2xl font-bold mt-1 ${stats?.profit < 0 ? "text-red-500" : "text-green-500"}`}
           >
             {statsLoading ? (
               <Spinner className="size-8 text-blue-500" />
             ) : (
-              "₹" + stats.profit
+              "₹" + stats?.profit
             )}
           </p>
         </div>

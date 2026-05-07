@@ -12,17 +12,160 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name String
-  email     String   @unique
-  mobile String @default("")
-  password  String
-  role      Role     @default(USER)
-  isSuspended Boolean @default(false)
-  createdAt DateTime @default(now())
+  id              Int       @id @default(autoincrement())
+  name            String
+  email           String    @unique
+  mobile          String?
+  emailVerifiedAt DateTime? @map("email_verified_at")
+  password        String
+  role            Role      @default(USER)
+  isSuspended     Boolean   @default(false) @map("is_suspended")
+  rememberToken   String?   @map("remember_token")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @default(now()) @updatedAt @map("updated_at")
+
+  // Relationships
+  listings          Listing[]
+  comments          Comment[]
+  likes             Like[]
+  expenseCategories ExpenseCategory[]
+  farms             Farm[]
+  expenses          Expense[]
 }
 
 enum Role {
   USER
   ADMIN
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  listings Listing[]
+
+  @@map("category")
+}
+
+model Listing {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String   @db.Text
+  image       String?
+  categoryId  Int      @map("category_id")
+  userId      Int      @map("user_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  category Category  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments Comment[]
+  likes    Like[]
+
+  @@map("listing")
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String   @db.Text
+  userId    Int      @map("user_id")
+  listingId Int      @map("listing_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("comment")
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  listingId Int      @map("listing_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  listing Listing @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@map("likes")
+}
+
+model ExpenseCategory {
+  id        Int      @id @default(autoincrement())
+  name      String
+  userId    Int?     @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user     User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  expenses Expense[]
+
+  @@map("expenses_categories")
+}
+
+model Farm {
+  id        Int      @id @default(autoincrement())
+  name      String
+  location  String?
+  size      String?
+  userId    Int      @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  crops    Crop[]
+  expenses Expense[]
+
+  @@map("farms")
+}
+
+model Crop {
+  id        Int      @id @default(autoincrement())
+  name      String
+  farmId    Int      @map("farm_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Relationships
+  farm     Farm      @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  expenses Expense[]
+
+  @@map("crops")
+}
+
+model Expense {
+  id          Int         @id @default(autoincrement())
+  amount      Decimal     @db.Decimal(10, 2)
+  note        String?
+  type        ExpenseType
+  categoryId  Int         @map("category_id")
+  cropId      Int         @map("crop_id")
+  farmId      Int         @map("farm_id")
+  userId      Int         @map("user_id")
+  expenseDate DateTime    @default(now()) @map("expense_date") @db.Date
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+
+  // Relationships
+  category ExpenseCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  crop     Crop            @relation(fields: [cropId], references: [id], onDelete: Cascade)
+  farm     Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("expenses")
+}
+
+enum ExpenseType {
+  EXPENSE
+  INCOME
 }

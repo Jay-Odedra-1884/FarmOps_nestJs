@@ -50,7 +50,7 @@ function page() {
         </div>
       ) : (
         <>
-          {listings.length > 0 ? (
+          {listings?.length > 0 ? (
             <>
               <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-5 gap-6 mt-10 px-10">
                 {listings ? (

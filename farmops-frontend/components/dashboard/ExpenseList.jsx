@@ -86,7 +86,7 @@ function ExpenseList({
   // ── Summary totals ─────────────────────────────────────────────────────
   const totals = useMemo(
     () =>
-      expenses.reduce(
+      expenses?.reduce(
         (acc, e) => {
           if (e.type === "income") acc.income += Number(e.amount);
           else acc.expense += Number(e.amount);
@@ -116,8 +116,8 @@ function ExpenseList({
 
     fetcher
       .then((res) => {
-        setExpenses(res.data.data);
-        setLastPage(res.data.last_page ?? 1);
+        setExpenses(res?.data?.data);
+        setLastPage(res?.data?.last_page ?? 1);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -368,7 +368,7 @@ function ExpenseList({
 
 
       {/* ── Summary pills ── */}
-      {!loading && expenses.length > 0 && (
+      {!loading && expenses?.length > 0 && (
         <div className="flex flex-wrap gap-3">
           <div className="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 rounded-xl px-3 py-1.5 text-sm font-semibold">
             <TrendingDownIcon className="size-4" />
@@ -395,7 +395,7 @@ function ExpenseList({
         <div className="flex justify-center items-center py-14">
           <Spinner className="size-9" />
         </div>
-      ) : expenses.length === 0 ? (
+      ) : expenses?.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-14 text-gray-400">
           <ReceiptIcon className="size-10 mb-3 text-gray-300" />
           <p className="text-sm">
@@ -423,7 +423,7 @@ function ExpenseList({
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-50">
-                {expenses.map((expense) => (
+                {expenses?.map((expense) => (
                   <ExpenseTableRow
                     key={expense.id}
                     expense={expense}
@@ -449,7 +449,7 @@ function ExpenseList({
 
           {/* Mobile cards */}
           <div className="flex sm:hidden flex-col gap-2">
-            {expenses.map((expense) => (
+            {expenses?.map((expense) => (
               <ExpenseMobileCard
                 key={expense.id}
                 expense={expense}

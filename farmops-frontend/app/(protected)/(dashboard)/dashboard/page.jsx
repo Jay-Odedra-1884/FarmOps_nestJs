@@ -59,25 +59,25 @@ function page() {
             {statsLoading ? (
               <Spinner className="size-8" />
             ) : (
-              "₹" + stats.expenses
+              "₹" + stats?.expenses
             )}
           </p>
         </div>
         <div className="w-full h-28 text-black bg-white shadow-lg border border-white/20 rounded-2xl flex flex-col justify-center items-center">
           <p className="text-xl font-semibold">Income</p>
           <p className="text-green-500 text-xl font-semibold">
-            {statsLoading ? <Spinner className="size-8" /> : "₹" + stats.income}
+            {statsLoading ? <Spinner className="size-8" /> : "₹" + stats?.income}
           </p>
         </div>
         <div className="w-full h-28 text-black bg-white shadow-lg border border-white/20 rounded-2xl flex flex-col justify-center items-center">
           <p className="text-xl font-semibold">Profit</p>
           <p
-            className={`text-xl font-semibold ${stats.profit < 0 ? "text-red-500" : "text-green-500"}`}
+            className={`text-xl font-semibold ${stats?.profit < 0 ? "text-red-500" : "text-green-500"}`}
           >
             {statsLoading ? (
               <Spinner className="size-8 text-blue-500" />
             ) : (
-              "₹" + stats.profit
+              "₹" + stats?.profit
             )}
           </p>
         </div>
@@ -90,7 +90,7 @@ function page() {
         </div>
         {/* expenses chart */}
         <div className="h-full bg-white rounded-2xl p-5">
-          <ChartLineMultiple data={expenses.data} />
+          <ChartLineMultiple data={expenses?.data} />
         </div>
       </div>
 

@@ -2,7 +2,7 @@ import toast from 'react-hot-toast';
 
 export const getListings = async (authToken, page) => {
     try {
-        let data = await fetch(process.env.NEXT_PUBLIC_API_URL + "/listings?page=" + page, {
+        let data = await fetch(process.env.NEXT_PUBLIC_API_URL + "/listings", {
             method: "GET",
             credentials: "include",
             headers: {
@@ -10,6 +10,7 @@ export const getListings = async (authToken, page) => {
                 "Accept": "application/json",
             }
         });
+        
         return await data.json();
     } catch (e) {
         console.error("Error fetching listings:", e);

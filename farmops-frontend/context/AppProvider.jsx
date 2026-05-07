@@ -62,7 +62,7 @@ export const AppProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await fetch(`${API_URL}/login`, {
+      const res = await fetch(`${API_URL}/auth/login`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -73,9 +73,10 @@ export const AppProvider = ({ children }) => {
       });
 
       const data = await res.json();
+      console.log(data);
       if (data.success) {
-        Cookies.set("authToken", data.token);
-        setAuthToken(data.token);
+        Cookies.set("authToken", data.access_token);
+        setAuthToken(data.access_token);
 
         // Persist user data (including role) for auth guards and role-based UI
         if (data.data) {
