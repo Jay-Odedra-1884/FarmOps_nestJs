@@ -104,7 +104,7 @@ export const AppProvider = ({ children }) => {
 
   const register = async (name, email, mobile, password, confirmPassword) => {
     try {
-      const res = await fetch(`${API_URL}/register`, {
+      const res = await fetch(`${API_URL}/auth/register`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -135,32 +135,37 @@ export const AppProvider = ({ children }) => {
   };
 
   const logout = async () => {
-    try {
-      const res = await fetch(`${API_URL}/logout`, {
-        method: "POST",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-      });
+    // try {
+    //   const res = await fetch(`${API_URL}/logout`, {
+    //     method: "POST",
+    //     credentials: "include",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //       Accept: "application/json",
+    //     },
+    //   });
 
-      const data = await res.json();
-      if (data.success) {
-        setAuthToken(null);
-        setAuthUser(null);
-        Cookies.remove("authToken");
-        localStorage.removeItem("authUser");
-        toast.success(data.message);
-      } else {
-        toast.error(getErrorMessage(data.message));
-      }
-      return data;
-    } catch (error) {
-      toast.error("logouFailed");
-      console.error("Logout failed:", error);
-      throw error;
-    }
+    //   const data = await res.json();
+    //   if (data.success) {
+    //     setAuthToken(null);
+    //     setAuthUser(null);
+    //     Cookies.remove("authToken");
+    //     localStorage.removeItem("authUser");
+    //     toast.success(data.message);
+    //   } else {
+    //     toast.error(getErrorMessage(data.message));
+    //   }
+    //   return data;
+    // } catch (error) {
+    //   toast.error("logouFailed");
+    //   console.error("Logout failed:", error);
+    //   throw error;
+    // }
+
+    setAuthToken(null);
+    setAuthUser(null);
+    Cookies.remove("authToken")
+    toast.success("Logout Successful");
   };
 
   const forgotPassword = async (email) => {
