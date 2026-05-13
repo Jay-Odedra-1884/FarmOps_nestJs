@@ -88,7 +88,7 @@ function ExpenseList({
     () =>
       expenses?.reduce(
         (acc, e) => {
-          if (e.type === "income") acc.income += Number(e.amount);
+          if (e.type?.toUpperCase() === "INCOME") acc.income += Number(e.amount);
           else acc.expense += Number(e.amount);
           return acc;
         },
@@ -116,8 +116,10 @@ function ExpenseList({
 
     fetcher
       .then((res) => {
-        setExpenses(res?.data?.data);
-        setLastPage(res?.data?.last_page ?? 1);
+        console.log(fetcher);
+        
+        setExpenses(res?.data);
+        setLastPage(res?.meta?.last_page ?? 1);
       })
       .catch(console.error)
       .finally(() => setLoading(false));

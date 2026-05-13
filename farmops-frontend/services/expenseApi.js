@@ -26,7 +26,15 @@ export const addExpense = async (authToken, expenseData) => {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authToken}`,
             },
-            body: JSON.stringify(expenseData),
+            body: JSON.stringify({
+                amount: expenseData.amount,
+                categoryId: expenseData.category_id,
+                cropId: expenseData.crop_id,
+                expenseDate: new Date(expenseData.expense_date),
+                farmId: expenseData.farm_id,
+                note: expenseData.note,
+                type: expenseData.type.toUpperCase()
+            }),
         });
         const data = await res.json();
         if (data.success) {
@@ -46,13 +54,14 @@ export const addExpense = async (authToken, expenseData) => {
 
 export const getAllExpenses = async (authToken, page = 1, filter = {}) => {
     try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/all-expenses?page=${page}&${new URLSearchParams(filter)}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/expenses?page=${page}&${new URLSearchParams(filter)}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authToken}`,
             },
         });
+        
         return await res.json();
     } catch (error) {
         console.error(error);
@@ -78,7 +87,7 @@ export const getExpensesByFarm = async (authToken, farmId, page = 1, filter = {}
 export const updateExpense = async (authToken, id, data) => {
     try {
         const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/expenses/${id}`, {
-            method: "PUT",
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${authToken}`,

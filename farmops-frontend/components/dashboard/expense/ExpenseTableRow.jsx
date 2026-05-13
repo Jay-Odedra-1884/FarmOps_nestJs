@@ -49,17 +49,17 @@ export default function ExpenseTableRow({
       <td className="px-4 py-3">
         <span
           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold ${
-            expense.type === "income"
+            expense.type?.toUpperCase() === "INCOME"
               ? "bg-green-100 text-green-700"
               : "bg-red-100 text-red-600"
           }`}
         >
-          {expense.type === "income" ? (
+          {expense.type?.toUpperCase() === "INCOME" ? (
             <TrendingUpIcon className="size-3" />
           ) : (
             <TrendingDownIcon className="size-3" />
           )}
-          {expense.type === "income" ? "Income" : "Expense"}
+          {expense.type?.toUpperCase() === "INCOME" ? "Income" : "Expense"}
         </span>
       </td>
 
@@ -113,10 +113,10 @@ export default function ExpenseTableRow({
       <td className="px-4 py-3 text-right font-semibold">
         <span
           className={
-            expense.type === "income" ? "text-green-600" : "text-red-500"
+            expense.type?.toUpperCase() === "INCOME" ? "text-green-600" : "text-red-500"
           }
         >
-          {expense.type === "income" ? "+" : "-"}
+          {expense.type?.toUpperCase() === "INCOME" ? "+" : "-"}
           {fmt(expense.amount)}
         </span>
       </td>

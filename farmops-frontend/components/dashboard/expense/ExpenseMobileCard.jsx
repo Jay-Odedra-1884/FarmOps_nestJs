@@ -38,7 +38,7 @@ export default function ExpenseMobileCard({
 }) {
   const isConfirmingDelete = confirmDeleteId === expense.id;
   const isDeleting = deletingExpenseId === expense.id;
-  const isIncome = expense.type === "income";
+  const isIncome = expense.type?.toUpperCase() === "INCOME";
 
   return (
     <div
